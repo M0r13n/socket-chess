@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket Chess</title>
+    <link href="css/chessboard.min.css" rel="stylesheet">
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #board {
+            max-width: 400px;
+        }
+
+        .watched_board {
+            max-width: 200px;
+            margin: 5px;
+        }
+
+        #watched_games {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 210px);
+        }
+    </style>
+</head>
+<body>
+<div id="main-content" class="container">
+    <h2>Socket Chess</h2>
+    <form class="form-inline">
+        <div class="form-group">
+            <label for="connect">WebSocket connection:</label>
+            <button id="connect" class="btn btn-default" type="submit">New Game</button>
+            <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
+            </button>
+        </div>
+    </form>
+
+    <div id="board"></div>
+
+    <!-- dependencies -->
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="js/chess.min.js"></script>
+    <script src="js/chessboard.min.js"></script>
+
+    <!-- client app-->
+    <script src="js/main.js"></script>
+
+
+</div>
+</body>
+</html>
