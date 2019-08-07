@@ -2,6 +2,7 @@ package de.leonmortenrichter.socketchess.websocket.controller;
 
 import de.leonmortenrichter.socketchess.chess.GameModel;
 import de.leonmortenrichter.socketchess.chess.GameModelRepository;
+import de.leonmortenrichter.socketchess.websocket.messages.GameModelMessage;
 import de.leonmortenrichter.socketchess.websocket.messages.MoveMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,25 +27,24 @@ public class GameController {
 
     @MessageMapping("/makeMove/{id}")
     @SendTo("/chess/state/{id}")
-    public GameModel move(@DestinationVariable Long id, MoveMessage move) {
+    public GameModelMessage move(@DestinationVariable Long id, MoveMessage move) {
         GameModel game = repository.findById(id).orElseThrow(EntityNotFoundException::new);
-        logger.info("Client made makeMove");
-        logger.info(move.toString());
-        // move
-        boolean moveMade = game.makeMove(move.getFrom(), move.getTo());
+        logger.info("Client with uuid " + move.getUuid() + " moves.");
+
+
+        boolean moveMade = game.makeMove(move.getFrom(), move.getTo(), move.getUuid());
 
         logger.info(moveMade ? "Move is legal" : "Move is illegal");
-
         repository.save(game);
-        return game;
+        return new GameModelMessage(game);
     }
 
     @MessageMapping("join/{id}")
     @SendTo("/chess/state/{id}")
-    public GameModel join(@DestinationVariable Long id) {
+    public GameModelMessage join(@DestinationVariable Long id) {
         GameModel game = repository.findById(id).orElseThrow(EntityNotFoundException::new);
         logger.info("Client joined!");
-        return game;
+        return new GameModelMessage(game);
     }
 
 }

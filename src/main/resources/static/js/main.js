@@ -5,14 +5,17 @@
  * Therefore the client uses sock.js.
  *
  * Chess data is always encoded in the official UCI notation.
+ *
+ * Note:
+ * Each player is identified by a unique UUID and needs to send it with every request.
  * */
 
 // variables
 var stompClient;
 var gid;
 var pieceColor;
+var uuid;
 var game = new Chess();
-var uid = uuidv4();
 var board = new ChessBoard('board', {
     position: game.fen(),
     draggable: true,
@@ -46,20 +49,16 @@ function joinRandomGame() {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         data: JSON.stringify({
-            playerId: uid
+            playerId: uuid
         })
     });
 
     // create a new websocket, after we joined the game
     request.done(function (data) {
-        // set game id
-        gid = data.id;
-        // is the player black or white ?
-        if (uid === data.player1) {
-            pieceColor = "w";
-        } else {
-            pieceColor = "b";
-        }
+
+        uuid = data.uuid;
+        gid = data.gid;
+        pieceColor = data.color;
 
         connect();
     });
@@ -80,7 +79,7 @@ function setConnected(connected) {
 }
 
 function makeMove(from, to) {
-    stompClient.send("/chess/makeMove/" + gid, {}, JSON.stringify({'from': from, 'to': to}));
+    stompClient.send("/chess/makeMove/" + gid, {}, JSON.stringify({'from': from, 'to': to, 'uuid': uuid}));
 }
 
 // Connect to a game and create a websocket
@@ -97,7 +96,8 @@ function connect() {
             var gameData = JSON.parse(data.body);
             updateBoard(gameData.fen);
         });
-        stompClient.send("/chess/join/" + gid, {}, JSON.stringify({'player': uid}));
+        // todo payload neccessary ?
+        stompClient.send("/chess/join/" + gid, {}, JSON.stringify({'player': uuid}));
     });
 }
 
@@ -111,21 +111,6 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-
-// ------------------------- Utils -------------------------
-
-// https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
-function uuidv4() {
-    var d = new Date().getTime();
-    if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
-        d += performance.now(); //use high-precision timer if available
-    }
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = (d + Math.random() * 16) % 16 | 0;
-        d = Math.floor(d / 16);
-        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-    });
-}
 
 $(function () {
     $("form").on('submit', function (e) {

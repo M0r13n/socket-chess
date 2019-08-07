@@ -1,9 +1,12 @@
 package de.leonmortenrichter.socketchess.chess;
 
+import de.leonmortenrichter.socketchess.websocket.messages.GameJoinMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -16,33 +19,27 @@ public class GameServerController {
         this.repository = repository;
     }
 
-    @GetMapping("/games")
-    List<GameModel> all() {
-        return repository.findAll();
-    }
-
 
     @PostMapping("/join")
-    public GameModel joinGame(@RequestBody PlayerModel player) {
-        // join an empty game or create a new one if no game exists
-        GameModel game = repository.findFirstByPlayer2IsNull();
-        String playerId = player.getPlayerId();
+    public GameJoinMessage joinGame() {
 
-        if (playerId == null) {
-            logger.info("No valid playerId provided. Aborting...");
-            return null;
-        }
+        String uuid = UUID.randomUUID().toString();
+        String color = "w";
+        GameModel game = repository.findFirstByPlayer2IsNull();
+
 
         if (game == null) {
             logger.info("No waiting games, creating new game...");
-            game = new GameModel(playerId);
+            game = new GameModel(uuid);
         } else {
             logger.info("Found waiting game, joining...");
-            game.setPlayer2(playerId);
+            game.setPlayer2(uuid);
+            color = "b";
         }
 
+        logger.info(uuid);
         // update changes
         repository.save(game);
-        return game;
+        return new GameJoinMessage(game.getId(), uuid, color);
     }
 }
