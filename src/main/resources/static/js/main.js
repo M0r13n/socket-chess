@@ -40,9 +40,6 @@ function updateBoard(fen) {
     board.position(game.fen());
 }
 
-function waitingForPlayer() {
-
-}
 
 
 // ------------------------- API -------------------------
@@ -97,7 +94,6 @@ function connect() {
             // update board
             var gameData = JSON.parse(data.body);
             if ((gameData.hasEmptySlot)) {
-                waitingForPlayer();
                 canMove = false;
             } else {
                 updateBoard(gameData.fen);
