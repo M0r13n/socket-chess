@@ -1,20 +1,27 @@
-var stompClient = null;
-var uid = uuidv4();
-var gid = null;
-var game = new Chess();
+/**
+ * General:
+ *
+ * Client and Server communicate via STOMP messages through a websocket.
+ * Therefore the client uses sock.js.
+ *
+ * Chess data is always encoded in the official UCI notation.
+ * */
+
+// variables
+var stompClient;
+var gid;
 var pieceColor;
+var game = new Chess();
+var uid = uuidv4();
 var board = new ChessBoard('board', {
     position: game.fen(),
     draggable: true,
     onDrop: function (from, to) {
 
-        // from and to are encoded in uci notation, e.g. e2
-
         if (game.turn() !== pieceColor) {
             return 'snapback';
         }
         var move = game.move({from: from, to: to});
-
         if (!move) {
             return 'snapback';
         }

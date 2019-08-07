@@ -35,14 +35,19 @@ public class GameModel {
     public boolean makeMove(String from, String to) {
         Board board = new Board();
         board.loadFromFen(this.fen);
-        Square fromSquare = Square.fromValue(from.toUpperCase());
-        Square toSquare = Square.fromValue(to.toUpperCase());
+        Square fromSquare;
+        Square toSquare;
+        try {
+            fromSquare = Square.fromValue(from.toUpperCase());
+            toSquare = Square.fromValue(to.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
         // only update the board if the move is legal
         if (board.doMove(new Move(fromSquare, toSquare))) {
             this.fen = board.getFen();
             return true;
         }
         return false;
-
     }
 }
