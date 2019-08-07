@@ -37,7 +37,12 @@ public class GameModel {
         board.loadFromFen(this.fen);
         Square fromSquare = Square.fromValue(from.toUpperCase());
         Square toSquare = Square.fromValue(to.toUpperCase());
-        return board.doMove(new Move(fromSquare, toSquare));
+        // only update the board if the move is legal
+        if (board.doMove(new Move(fromSquare, toSquare))) {
+            this.fen = board.getFen();
+            return true;
+        }
+        return false;
 
     }
 }

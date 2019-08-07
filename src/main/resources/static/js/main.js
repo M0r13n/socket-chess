@@ -84,11 +84,11 @@ function connect() {
         setConnected(true);
         console.log('Connected: ' + frame);
 
-        stompClient.subscribe('/chess/state/' + gid, function (response) {
-            console.log(response);
-
-            // todo update board
-            //updateBoard(game.fen());
+        stompClient.subscribe('/chess/state/' + gid, function (data) {
+            // update board
+            // todo error handling
+            var gameData = JSON.parse(data.body);
+            updateBoard(gameData.fen);
         });
         stompClient.send("/chess/join/" + gid, {}, JSON.stringify({'player': uid}));
     });

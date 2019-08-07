@@ -31,7 +31,7 @@ public class GameController {
         logger.info("Client made makeMove");
         logger.info(move.toString());
         // move
-        Boolean moveMade = game.makeMove(move.getFrom(), move.getTo());
+        boolean moveMade = game.makeMove(move.getFrom(), move.getTo());
 
         logger.info(moveMade ? "Move is legal" : "Move is illegal");
 
