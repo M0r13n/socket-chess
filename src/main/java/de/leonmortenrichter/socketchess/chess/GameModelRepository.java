@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface GameModelRepository extends JpaRepository<GameModel, Long> {
 
-    public List<GameModel> findByPlayer2IsNull();
+    GameModel findFirstByHasEmptySlot(boolean hasEmptySlot);
 
-    public GameModel findFirstByPlayer2IsNull();
+    GameModel findByPlayer1IdOrPlayer2Id(String id1, String id2);
+
+
 }

@@ -15,13 +15,14 @@ var stompClient;
 var gid;
 var pieceColor;
 var uuid;
+var canMove = false;
 var game = new Chess();
 var board = new ChessBoard('board', {
     position: game.fen(),
     draggable: true,
     onDrop: function (from, to) {
 
-        if (game.turn() !== pieceColor) {
+        if ((game.turn() !== pieceColor) || (!canMove)) {
             return 'snapback';
         }
         var move = game.move({from: from, to: to});
@@ -32,12 +33,17 @@ var board = new ChessBoard('board', {
     }
 });
 
-// ------------------------- Board Manipulation -------------------------
+// ------------------------- Page Stuff -------------------------
 
 function updateBoard(fen) {
     game.load(fen);
     board.position(game.fen());
 }
+
+function waitingForPlayer() {
+
+}
+
 
 // ------------------------- API -------------------------
 
@@ -47,10 +53,7 @@ function joinRandomGame() {
         url: "/api/join",
         type: "post",
         contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        data: JSON.stringify({
-            playerId: uuid
-        })
+        dataType: "json"
     });
 
     // create a new websocket, after we joined the game
@@ -92,17 +95,21 @@ function connect() {
 
         stompClient.subscribe('/chess/state/' + gid, function (data) {
             // update board
-            // todo error handling
             var gameData = JSON.parse(data.body);
-            updateBoard(gameData.fen);
+            if ((gameData.hasEmptySlot)) {
+                waitingForPlayer();
+                canMove = false;
+            } else {
+                updateBoard(gameData.fen);
+                canMove = true;
+            }
         });
-        // todo payload neccessary ?
-        stompClient.send("/chess/join/" + gid, {}, JSON.stringify({'player': uuid}));
+        stompClient.send("/chess/join/" + gid, {}, JSON.stringify({'uuid': uuid}));
     });
 }
 
 
-// disconnect -- NOT YET WORKING
+// disconnect
 function disconnect() {
     if (stompClient !== null) {
         stompClient.disconnect();

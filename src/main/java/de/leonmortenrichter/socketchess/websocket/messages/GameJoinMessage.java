@@ -11,13 +11,16 @@ public class GameJoinMessage {
 
     private String color;
 
+    private Boolean hasEmptySlot;
+
     public GameJoinMessage() {
     }
 
-    public GameJoinMessage(Long id, String uuid, String color) {
+    public GameJoinMessage(Long id, String uuid, String color, boolean hasEmptySlot) {
         this.gid = id;
         this.uuid = uuid;
         this.color = color;
+        this.hasEmptySlot = hasEmptySlot;
     }
 
 }
