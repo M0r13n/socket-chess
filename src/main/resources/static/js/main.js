@@ -41,7 +41,7 @@ function updateBoard(fen) {
 }
 
 function rotate() {
-    if (board.orientation !== "black")
+    if (board.orientation().charAt(0) !== pieceColor)
         board.flip();
 
 }
@@ -63,8 +63,7 @@ function joinRandomGame() {
         uuid = data.uuid;
         gid = data.gid;
         pieceColor = data.color;
-        if (pieceColor === "b")
-            rotate();
+        rotate();
         connect();
     });
 
