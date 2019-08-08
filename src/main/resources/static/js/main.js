@@ -46,6 +46,12 @@ function rotate() {
 
 }
 
+// change buttons
+function setConnected(connected) {
+    $("#connect").prop("disabled", connected);
+    $("#disconnect").prop("disabled", !connected);
+
+}
 
 // ------------------------- API -------------------------
 
@@ -75,12 +81,6 @@ function joinRandomGame() {
 
 // ------------------------- Websocket Stuff -------------------------
 
-// change buttons
-function setConnected(connected) {
-    $("#connect").prop("disabled", connected);
-    $("#disconnect").prop("disabled", !connected);
-
-}
 
 function makeMove(from, to) {
     stompClient.send("/chess/makeMove/" + gid, {}, JSON.stringify({'from': from, 'to': to, 'uuid': uuid}));
@@ -120,6 +120,7 @@ function handleGameEvent(event) {
 
         case "GAME_DISCONNECT":
             console.log("Player left the game!");
+            canMove = false;
             break;
 
         default:
