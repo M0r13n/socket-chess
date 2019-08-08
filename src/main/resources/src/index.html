@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket Chess</title>
+    <link rel="stylesheet" href="css/chessboard.min.css" />
+    <link rel="stylesheet" href="scss/main.scss" />
+  </head>
+  <body>
+    <div id="main-content" class="container">
+      <h2>Socket Chess</h2>
+      <form class="form-inline">
+        <div class="form-group">
+          <label for="connect">WebSocket connection:</label>
+          <button id="connect" class="btn btn-default" type="submit">
+            New Game
+          </button>
+          <button
+            id="disconnect"
+            class="btn btn-default"
+            type="submit"
+            disabled="disabled"
+          >
+            Disconnect
+          </button>
+        </div>
+      </form>
+
+      <div id="board"></div>
+
+      <!-- bundle -->
+      <script src="ts/index.ts"></script>
+    </div>
+  </body>
+</html>
