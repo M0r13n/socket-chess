@@ -1,6 +1,8 @@
 # Socket Chess
 A basic chess game based on Websockets.
 
+![alt text](https://github.com/M0r13n/socket-chess/blob/master/img/game.png "Example Game")
+
 ## Run
 - build: `gradle clean build`
 - run: `java -jar build/libs/socket-chess-0.0.1-SNAPSHOT.jar`
@@ -19,5 +21,4 @@ A basic chess game based on Websockets.
 ## Ideas for improvement
 - enhance UI
 - make games watchable
-- dockerize
 - add undo functionality
