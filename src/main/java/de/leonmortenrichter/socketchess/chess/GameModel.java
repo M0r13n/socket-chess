@@ -73,6 +73,19 @@ public class GameModel {
         return "b";
     }
 
+    public boolean isPlayer1(String id) {
+        return id.equals(player1Id);
+    }
+
+    public int getNumPlayer() {
+        if ((player1 != null) && (player2 != null))
+            return 2;
+        if ((player1 != null) || (player2 != null))
+            return 1;
+        return 0;
+
+    }
+
     public boolean makeMove(String from, String to, String uuid) {
         // check if player is allowed to move
         if (!uuid.equals(currentPlayer ? player1 : player2))

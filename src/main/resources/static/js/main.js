@@ -40,6 +40,11 @@ function updateBoard(fen) {
     board.position(game.fen());
 }
 
+function rotate() {
+    if (board.orientation !== "black")
+        board.flip();
+
+}
 
 
 // ------------------------- API -------------------------
@@ -55,11 +60,11 @@ function joinRandomGame() {
 
     // create a new websocket, after we joined the game
     request.done(function (data) {
-
         uuid = data.uuid;
         gid = data.gid;
         pieceColor = data.color;
-
+        if (pieceColor === "b")
+            rotate();
         connect();
     });
 
@@ -84,26 +89,45 @@ function makeMove(from, to) {
 
 // Connect to a game and create a websocket
 function connect() {
+    // create websocket
     var socket = new SockJS('/chess-websocket');
     stompClient = Stomp.over(socket);
+
+    // connect socket to server
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
 
-        stompClient.subscribe('/chess/state/' + gid, function (data) {
-            // update board
-            var gameData = JSON.parse(data.body);
-            if ((gameData.hasEmptySlot)) {
-                canMove = false;
-            } else {
-                updateBoard(gameData.fen);
-                canMove = true;
-            }
+        // subscribe to endpoints
+        stompClient.subscribe('/chess/state/' + gid, function (event) {
+            handleGameEvent(event);
         });
         stompClient.send("/chess/join/" + gid, {}, JSON.stringify({'uuid': uuid}));
     });
 }
 
+function handleGameEvent(event) {
+    var msg = JSON.parse(event.body);
+
+    switch (msg.type) {
+        case "GAME_STATE":
+            if ((msg.hasEmptySlot)) {
+                canMove = false;
+                return;
+            }
+            updateBoard(msg.fen);
+            canMove = true;
+            break;
+
+        case "GAME_DISCONNECT":
+            console.log("Player left the game!");
+            break;
+
+        default:
+            console.log("Could not parse data!");
+    }
+
+}
 
 // disconnect
 function disconnect() {

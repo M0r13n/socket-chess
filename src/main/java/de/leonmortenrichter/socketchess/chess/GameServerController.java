@@ -38,6 +38,6 @@ public class GameServerController {
         logger.info(uuid);
         // update changes
         repository.save(game);
-        return new GameJoinMessage(game.getId(), uuid, color,game.getHasEmptySlot());
+        return new GameJoinMessage(game.getId(), uuid, color, game.getHasEmptySlot());
     }
 }

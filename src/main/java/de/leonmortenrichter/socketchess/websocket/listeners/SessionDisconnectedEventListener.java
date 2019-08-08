@@ -2,7 +2,7 @@ package de.leonmortenrichter.socketchess.websocket.listeners;
 
 import de.leonmortenrichter.socketchess.chess.GameModel;
 import de.leonmortenrichter.socketchess.chess.GameModelRepository;
-import de.leonmortenrichter.socketchess.websocket.messages.GameModelMessage;
+import de.leonmortenrichter.socketchess.websocket.messages.GameDisconnectMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
@@ -42,8 +42,14 @@ public class SessionDisconnectedEventListener implements ApplicationListener<Ses
 
         game.disconnectById(playerId);
         logger.info("Client " + playerId + " has disconnected!");
-        repository.save(game);
-        template.convertAndSend("/chess/state/" + game.id, new GameModelMessage(game));
+
+        // delete games without active players
+        if (game.getNumPlayer() == 0)
+            repository.delete(game);
+        else
+            repository.save(game);
+
+        template.convertAndSend("/chess/state/" + game.id, new GameDisconnectMessage(game.isPlayer1(playerId) ? "player1" : "player2"));
     }
 
 }

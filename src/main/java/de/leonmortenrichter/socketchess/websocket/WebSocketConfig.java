@@ -10,15 +10,20 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    private static final String MESSAGING_PREFIX = "/chess";
+    private static final String[] DESTINATION_PREFIX = {"/chess"};
+    private static final String STOMP_ENDPOINT = "/chess-websocket";
+
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/chess");
-        config.setApplicationDestinationPrefixes("/chess");
+        config.enableSimpleBroker(DESTINATION_PREFIX);
+        config.setApplicationDestinationPrefixes(MESSAGING_PREFIX);
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chess-websocket").withSockJS();
+        registry.addEndpoint(STOMP_ENDPOINT).withSockJS();
     }
 
 }

@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class GameJoinMessage {
 
+    private final String TYPE = "GAME_JOIN";
+
     private Long gid;
 
     private String uuid;
